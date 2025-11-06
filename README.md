@@ -42,7 +42,7 @@ Finally, for those using Visual Studio, Rider or any other IDE that can open VS 
 
 ## Installation
 
-There is no need to install the program in the OS that you use to build the virtual keyboard, since the app will be output to the corresponding directory. For example, in Linux, you will find a file names VirtualKeyboard in the same folder where the make files are located.
+There is no need to install the program in the OS that you use to build the virtual keyboard, since the app will be output to the corresponding directory. For example, in Linux, you will find a file named 'VirtualKeyboard' in the same folder where the make files are located.
 
 To install it on the TSP, or the Brick, just copy such file to any APPs folder that you usually use and then execute from the Terminal or a bash script, by following these criteria: 
 
