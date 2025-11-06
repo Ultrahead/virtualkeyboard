@@ -38,7 +38,7 @@ cd /virtualkeyboard
 
 In case you need to star over use type ```./make clean``` before you call ```make```. That will remove any previous configuration, 'make' leftovers and VirtualKeyboard app generated in previous builds. 
 
-Finally, for those using Visual Studio, Rider or any other IDE that can open VS solutions, I have included a solution file. If you use it, don't forget to configure your IDE so that both, the compiler and the liker finds the SDL2 SDK to use.
+Finally, for those using Visual Studio, Rider or any other IDE that can open VS solutions, I have included a solution file. If you use it, don't forget to configure your IDE so that both, the compiler and the linker finds the SDL2 SDK to use.
 
 ## Installation
 
