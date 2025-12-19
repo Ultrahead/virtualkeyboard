@@ -49,14 +49,17 @@ To install it on the TSP, or the Brick, just copy such file to any APPs folder t
 ```sh
 sh ./VirtualKeyboard
 sh ./VirtualKeyboard "sometexture.png"
-sh ./VirtualKeyboard "sometexture.png" "text to initially show in the keyboard"
+sh ./VirtualKeyboard "sometexture.png" "myFont.ttf"
+sh ./VirtualKeyboard "sometexture.png" "myFont.ttf" "text to initially show in the keyboard"
 ```
 
 The first command will open the keyboard with blank text and using a default background texture provided you add one in the "res" folder, naming it "background_default.png". If it fails to load say texture a default grey-like color will be used, instead.
 
 The second command will attempt this time to load the texture "sometexture.png" located in the "res" folder, and again, if it fails, a default grey-like color will be used, instead.
 
-The third command will do the same as before, but in this case, it will show the passed text, that is, "text to initially show in the keyboard" when the keybaord starts. Below, it's an example of say command execution with the text "Hello world!".
+The third command will do the same as before, but in this case, it will also load the font "myFont.ttf" located in the "res" folder, and if it fails, it will search for the default font.
+
+The fourth command will do the same as before, but in this case, it will show the passed text, that is, "text to initially show in the keyboard" when the keybaord starts. Below, it's an example of say command execution with the text "Hello world!".
 
 ![](https://github.com/Ultrahead/virtualkeyboard/blob/main/screenshots/img_helloworld.png)
 
