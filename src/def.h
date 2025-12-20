@@ -8,7 +8,7 @@
 #define _DEF_H_
 
 /**
- * @brief Macro used to inhibit or suppress pecific code.
+ * @brief Macro used to inhibit or suppress specific code.
  *
  * @param X Specifies the code to inhibit. For example, INHIBIT(SDL_Delay(100);).
  */
