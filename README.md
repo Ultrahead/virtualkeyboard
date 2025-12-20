@@ -33,7 +33,7 @@ Once you have your ```Linux``` building environment properly setup, follow these
 ```sh
 git clone https://github.com/Ultrahead/virtualkeyboard.git
 cd /virtualkeyboard
-./make
+make
 ```
 
 In case you need to star over use type ```./make clean``` before you call ```make```. That will remove any previous configuration, 'make' leftovers and VirtualKeyboard app generated in previous builds. 
