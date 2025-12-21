@@ -113,11 +113,14 @@ const bool CResourceManager::init(const int argc, char** const argv)
     SDL_Log("Using resource path: %s (from source: %i)", l_resPath.string().c_str(), l_pathSourceId);
 
     const char* l_backgroundName = (argc > 1) ? argv[1] : "background_default.png";
-    const fs::path l_backgroundPath = l_resPath / l_backgroundName;
+    fs::path l_tempPath(l_backgroundName);
+
+    const fs::path l_backgroundPath = l_tempPath.is_absolute() ? l_tempPath : l_resPath / l_backgroundName;
     
     if (SDL_Surface* l_surface = LoadIcon(l_backgroundPath.string().c_str()))
 	{
 		m_surfaces[T_SURFACE_BACKGROUND] = l_surface;
+        SDL_Log("Using background: %s", l_backgroundName);
 	}
 	else
     {
@@ -125,13 +128,29 @@ const bool CResourceManager::init(const int argc, char** const argv)
     }
 
     const char* l_fontName = (argc > 2) ? (*argv[2] != '\0' ? argv[2] : "FieryTurk.ttf") : "FieryTurk.ttf";
-    const fs::path l_fontPath = l_resPath / l_fontName;
+    l_tempPath = fs::path(l_fontName);
+    const fs::path l_fontPath = l_tempPath.is_absolute() ? l_tempPath : l_resPath / l_fontName;
     m_font = SDL_Utils::loadFont(l_fontPath.string().c_str(), static_cast<int>(FONT_SIZE * Globals::g_Screen.getAdjustedPpuY()));
 
     if(m_font == nullptr)
     {
-        SDL_LogError(0, "Could not load keyboard's font: %s", TTF_GetError());
-        return false;
+        fs::path l_executablePath(argv[0]);
+        const fs::path l_fontPathDefault(l_executablePath.parent_path().append(RES_DIR_NAME) / "FieryTurk.ttf");
+        m_font = SDL_Utils::loadFont(l_fontPathDefault.string().c_str(), static_cast<int>(FONT_SIZE * Globals::g_Screen.getAdjustedPpuY()));
+
+        if (m_font == nullptr)
+        {
+            SDL_LogError(0, "Could not load keyboard's font: %s", TTF_GetError());
+            return false;
+        }
+        else
+		{
+			SDL_Log("Using default font: FieryTurk.ttf");
+		}
+    }
+    else
+    {
+		SDL_Log("Using font: %s", l_fontName);
     }
 
     return true;
