@@ -237,7 +237,7 @@ const int initKeyboard(const int argc, char** const argv)
 	// 6. Print the whole formatted output string to the console and return a value indicating success (0).
 	// 7. If the keyboard execution was not successful, log a warning message and return 1.
 
-	CKeyboard l_keyboard(argc < 3 ? "" : argv[2]);
+	CKeyboard l_keyboard(argc < 4 ? "" : argv[3]);
 
 	if (l_keyboard.execute() == 1)
 	{

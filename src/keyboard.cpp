@@ -285,7 +285,7 @@ void CKeyboard::render(const bool p_focus) const
     SDL_Utils::applySurface(l_keyboardX, l_fieldY, m_textField, Globals::g_screen);
 
     const float l_textAreaLenght = l_fieldWidth - 3 * l_adjustedPpuX;
-    int l_caretPositionTmp = m_caretPosition;
+    int l_caretPositionTmp = (int)m_caretPosition;
     SDL_Rect l_rect{};
     l_rect.y = 0;
     l_rect.w = l_fieldWidth;
@@ -674,7 +674,7 @@ const bool CKeyboard::moveCursorUp(const bool p_loop)
 
     static constexpr int s_totalKeysPlusOne = 1 + TOTALKEYS;
     static constexpr int s_keyColumnsMinusOneRow = KEYCOLUMNS * (KEYROWS - 1);
-    static int s_halfSetDown = std::floor(0.5f * KEYCOLUMNS);
+    static int s_halfSetDown = (int)std::floor(0.5f * KEYCOLUMNS);
 
     if (m_selected >= TOTALKEYS)
     {
@@ -730,7 +730,7 @@ const bool CKeyboard::moveCursorDown(const bool p_loop)
     static constexpr int s_keyRowsMinusOne = KEYROWS - 1;
     static constexpr int s_keyColumnsMinusOneRow = KEYCOLUMNS * (KEYROWS - 1);
     static constexpr int s_keyInLastRow = TOTALKEYS - (KEYCOLUMNS - 1);
-    static int s_halfSetUp = TOTALKEYS - std::ceil(0.5f * KEYCOLUMNS);
+    static int s_halfSetUp = (int)(TOTALKEYS - std::ceil(0.5f * KEYCOLUMNS));
 
     if (m_selected >= TOTALKEYS)
     {
@@ -961,13 +961,13 @@ const bool CKeyboard::moveCaret(const bool goLeft)
 
         if (goLeft)
         {
-            const size_t l_caretAdvance = 1 + ((m_caretPosition < 2) ? 0 : checkUtf8Code(m_inputText.at(m_caretPosition - 2)));
+            const size_t l_caretAdvance = static_cast<size_t>(1) + ((m_caretPosition < 2) ? 0 : checkUtf8Code(m_inputText.at(m_caretPosition - 2)));
             
             if (m_caretPosition > 0) m_caretPosition = std::max(size_t(0), m_caretPosition - l_caretAdvance);
         }
         else if(m_caretPosition < l_currentSize)
         {
-            const size_t l_caretAdvance = 1 + ((m_caretPosition > l_currentSize - 2) ? 0 : checkUtf8Code(m_inputText.at(m_caretPosition)));
+            const size_t l_caretAdvance = static_cast<size_t>(1) + ((m_caretPosition > l_currentSize - 2) ? 0 : checkUtf8Code(m_inputText.at(m_caretPosition)));
 
             m_caretPosition = std::min(l_currentSize, m_caretPosition + l_caretAdvance);
         }

@@ -8,6 +8,7 @@
 #define shrinkSurface GFX_shrinkSurface
 #endif // _WIN64
 
+#include <cstdint>
 #include <iostream>
 #include <SDL_image.h>
 #include <SDL2_rotozoom.h>
@@ -58,18 +59,74 @@ CResourceManager::CResourceManager(void) :
 
 const bool CResourceManager::init(const int argc, char** const argv)
 {
-	// 1. Try to get the background image path from the command line arguments.
-	// 2. If not provided, use the default one.
-	// 3. Load the background image and assign it to the proper slot in the array.
-	// 4. Load the font and assign it to the corresponding member.
-	// 5. If any of the loading operation fails, return FALSE. Otherwise, return TRUE.
+	// 1. Try to get the path to the "res" folder (from environment variable, executable path or current path).
+	// 2. Try to get the background image path from the command line arguments.
+	// 3. If not provided, use the default one.
+	// 4. Load the background image and assign it to the proper slot in the array.
+	// 5. Load the font and assign it to the corresponding member.
+	// 6. If any of the loading operation fails, return FALSE. Otherwise, return TRUE.
 
-    const char* l_backgroundPath = (argc > 1) ? argv[1] : "background_default.png";
-    std::string l_shortPath(RES_DIR);
-    l_shortPath.append(l_backgroundPath);
+    fs::path l_resPath;
+	uint8_t l_pathSourceId = 0;
 
-    m_surfaces[T_SURFACE_BACKGROUND] = LoadIcon(l_shortPath.c_str());
-    m_font = SDL_Utils::loadFont(RES_DIR "FieryTurk.ttf", static_cast<int>(FONT_SIZE * Globals::g_Screen.getAdjustedPpuY()));
+#ifdef _WIN64
+    char* l_env = nullptr;
+    size_t len = 0;
+
+    if (_dupenv_s(&l_env, &len, "VK_RES_PATH") == 0 && l_env != nullptr)
+#else
+    if (const char* l_env = getenv("VK_RES_PATH"))
+#endif // _WIN64
+    {
+		l_resPath = fs::path(l_env);      
+		l_pathSourceId = isPathValid(l_resPath) ? 1 : 0; // From the environment variable
+    }
+
+    if(l_pathSourceId < 1)
+    {
+        fs::path l_executablePath(argv[0]);
+        const fs::path l_parentPath(l_executablePath.parent_path().append(RES_DIR_NAME));
+
+        try 
+        {
+            l_resPath = l_parentPath.is_absolute() ? l_parentPath : fs::absolute(l_parentPath);
+            l_pathSourceId = isPathValid(l_resPath) ? 2 : 0; // From the executable path
+        }
+        catch (const fs::filesystem_error& e) 
+        {
+            std::cerr << "Error determining absolute path: " << e.what() << std::endl;
+        }
+    }
+
+    if (l_pathSourceId < 1)
+    {
+		l_resPath = fs::current_path().append(RES_DIR_NAME);
+        l_pathSourceId = isPathValid(l_resPath) ? 3 : 0; // From the working path (with the res folder)
+    }
+
+    if (l_pathSourceId < 1)
+    {
+        l_resPath = fs::current_path();
+		l_pathSourceId = 4; // From the working path (without the res folder), if everything else fails.
+    }
+
+    SDL_Log("Using resource path: %s (from source: %i)", l_resPath.string().c_str(), l_pathSourceId);
+
+    const char* l_backgroundName = (argc > 1) ? argv[1] : "background_default.png";
+    const fs::path l_backgroundPath = l_resPath / l_backgroundName;
+    
+    if (SDL_Surface* l_surface = LoadIcon(l_backgroundPath.string().c_str()))
+	{
+		m_surfaces[T_SURFACE_BACKGROUND] = l_surface;
+	}
+	else
+    {
+	    SDL_LogError(0, "Could not load keyboard's background image: %s", IMG_GetError());
+    }
+
+    const char* l_fontName = (argc > 2) ? (*argv[2] != '\0' ? argv[2] : "FieryTurk.ttf") : "FieryTurk.ttf";
+    const fs::path l_fontPath = l_resPath / l_fontName;
+    m_font = SDL_Utils::loadFont(l_fontPath.string().c_str(), static_cast<int>(FONT_SIZE * Globals::g_Screen.getAdjustedPpuY()));
 
     if(m_font == nullptr)
     {

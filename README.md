@@ -24,7 +24,7 @@ In addition to that, you may modify the code to add more rows, columns and chars
 
 ## Building Steps
 
-First of all, make sure that you have installed in your system all the usual packages and compilers required to compile C++ applications supporting at least the C++11 standard. Also, don't forget to download and install on your system the development packages of SDL2, including the ones supporting TTF and Image. It is recommended to browse for v2.26.3 of SDL2, so as to be sure it will run on the TSP. For your convenience I have included a zip file containing such version of SDL2. 
+First of all, make sure that you have installed in your system all the usual packages and compilers required to compile C++ applications supporting at least the C++11 standard. Also, don't forget to download and install on your system the development packages of SDL2, including the ones supporting, TTF (sdl2_ttf), Image (sdl2_image) and Gfx (sdl2_gfx). It is recommended to browse for v2.26.3 of SDL2, so as to be sure it will run on the TSP. For your convenience I have included a zip file containing such version of SDL2. 
 
 Please notice that the name of the packages and pack managers may vary per distro, but in case of Linux it is important that you compile the code for GNU C Library upto v2.33, which is the one the TSP OS was built for. You can use a Docker Image like Debian:11.11 for Arm64v8 for the building process and it will work.
 
@@ -33,7 +33,7 @@ Once you have your ```Linux``` building environment properly setup, follow these
 ```sh
 git clone https://github.com/Ultrahead/virtualkeyboard.git
 cd /virtualkeyboard
-./make
+make -j $(nproc)
 ```
 
 In case you need to star over use type ```./make clean``` before you call ```make```. That will remove any previous configuration, 'make' leftovers and VirtualKeyboard app generated in previous builds. 
@@ -49,14 +49,17 @@ To install it on the TSP, or the Brick, just copy such file to any APPs folder t
 ```sh
 sh ./VirtualKeyboard
 sh ./VirtualKeyboard "sometexture.png"
-sh ./VirtualKeyboard "sometexture.png" "text to initially show in the keyboard"
+sh ./VirtualKeyboard "sometexture.png" "myFont.ttf"
+sh ./VirtualKeyboard "sometexture.png" "myFont.ttf" "text to initially show in the keyboard"
 ```
 
 The first command will open the keyboard with blank text and using a default background texture provided you add one in the "res" folder, naming it "background_default.png". If it fails to load say texture a default grey-like color will be used, instead.
 
 The second command will attempt this time to load the texture "sometexture.png" located in the "res" folder, and again, if it fails, a default grey-like color will be used, instead.
 
-The third command will do the same as before, but in this case, it will show the passed text, that is, "text to initially show in the keyboard" when the keybaord starts. Below, it's an example of say command execution with the text "Hello world!".
+The third command will do the same as before, but in this case, it will also load the font "myFont.ttf" located in the "res" folder, and if it fails, it will stop execution. If nothing is provided (or "" is added so as to input a text parameter), the default font will be loaded, instead.
+
+The fourth command will do the same as before, but in this case, it will show the passed text, that is, "text to initially show in the keyboard" when the keybaord starts. Below, it's an example of say command execution with the text "Hello world!".
 
 ![](https://github.com/Ultrahead/virtualkeyboard/blob/main/screenshots/img_helloworld.png)
 

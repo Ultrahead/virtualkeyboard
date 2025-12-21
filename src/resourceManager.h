@@ -6,6 +6,9 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 /**
  * @brief Macro that indicates the number of surface resources to load.
@@ -90,6 +93,16 @@ class CResourceManager
      * @param p_source The source resource manager to move resources from.
      */
     CResourceManager(const CResourceManager&& p_source) = delete;
+
+    /**
+     * @brief               Checks whether the path to a folder is valid or not.
+     * @param p_pathToCheck The path to check.
+     * @return              TRUE if the path is a valid directory; otherwise, FALSE.
+     */
+    inline bool isPathValid(const fs::path& p_pathToCheck)
+    {
+        return fs::exists(p_pathToCheck) && fs::is_directory(p_pathToCheck);
+    }
 
     /**
      * @brief Array of surfaces to load.

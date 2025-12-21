@@ -8,7 +8,7 @@
 #define _DEF_H_
 
 /**
- * @brief Macro used to inhibit or suppress pecific code.
+ * @brief Macro used to inhibit or suppress specific code.
  *
  * @param X Specifies the code to inhibit. For example, INHIBIT(SDL_Delay(100);).
  */
@@ -25,7 +25,7 @@
  *
  * @param X Specifies the relative path to the resources.
  */
-#define RES_DIR "res/"
+#define RES_DIR_NAME "res/"
 
 /**
  * @brief Macro used to indicate whether the caret must blink or always stay visible.
@@ -70,7 +70,7 @@
  *
  * @param X The reference size, respectively, in pixels. By default, it is set to 1280x720 pixels to match the TSP's screen.
  */
-#define SCREEN_OPACITY 0.85f
+#define SCREEN_OPACITY 1.00f
 
 /**
  * @brief Macro that indicates the desired amount of milliseconds per frame.
