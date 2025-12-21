@@ -40,7 +40,7 @@ all: $(OBJS)
 	$(CC) $(OBJS) -o $(target) $(LIB)
 
 %.o: %.cpp
-	$(CC) -std=c++11 -DRESDIR="\"$(RESDIR)\"" -c $< -o $@ $(INCLUDE)
+	$(CC) -std=c++17 -DRESDIR="\"$(RESDIR)\"" -c $< -o $@ $(INCLUDE)
 
 clean:
 	rm -f $(OBJS) $(target)
