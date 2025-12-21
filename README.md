@@ -63,6 +63,8 @@ The fourth command will do the same as before, but in this case, it will show th
 
 ![](https://github.com/Ultrahead/virtualkeyboard/blob/main/screenshots/img_helloworld.png)
 
+Now you can also indicate where the `res` folder is located by setting the environment variable: `VK_RES_PATH` (for example, in Linux: `export VK_RES_PATH="/full/path/to/res/folder"`). Also, is you pass full paths to either the background image and or the font, those will be used instead of the `res` folder.
+
 You can even do things like the following to get the text input by the user ...:
 
 ```sh
