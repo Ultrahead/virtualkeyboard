@@ -3,9 +3,9 @@
  * @brief Implementation file for globals in SDL_Utils namespace.
  */
 
-#ifdef _WIN64
+#ifndef __MINGW64__
 #define zoomSurface GFX_zoomSurface
-#endif // _WIN64
+#endif // __MINGW64__
 
 #include "sdlUtils.h"
 #include <algorithm>
@@ -19,8 +19,16 @@
 bool SDL_Utils::isSupportedImageExt(const std::string& p_filename) 
 {
 	// Check if the file extension is supported (jpg, jpeg, png, ico, bmp and xcf).
+    
+    size_t l_dotPos = p_filename.find_last_of('.');
+    if (l_dotPos == std::string::npos) return false;
 
-    return p_filename == "jpg" || p_filename == "jpeg" || p_filename == "png" || p_filename == "ico" || p_filename == "bmp" || p_filename == "xcf";
+    std::string l_ext = p_filename.substr(l_dotPos + 1);
+    // Convert to lowercase for case-insensitive comparison
+    std::transform(l_ext.begin(), l_ext.end(), l_ext.begin(), ::tolower);
+
+    return l_ext == "jpg" || l_ext == "jpeg" || l_ext == "png" || 
+           l_ext == "ico" || l_ext == "bmp"  || l_ext == "xcf";
 }
 
 SDL_Surface *SDL_Utils::loadImageToFit(const std::string &p_filename, int p_fitWidth, int p_fitHeight)
@@ -34,38 +42,38 @@ SDL_Surface *SDL_Utils::loadImageToFit(const std::string &p_filename, int p_fitW
 	// 7. Free the original image surface.
 	// 8. Return the scaled image surface.
 
-    SDL_Surface* l_imgage = IMG_Load(p_filename.c_str());
+    SDL_Surface* l_image = IMG_Load(p_filename.c_str());
 
-    if (IMG_GetError() != nullptr && *IMG_GetError() != '\0') 
+    if (!l_image) 
     {
         SDL_Log("Error when loading image: %s", IMG_GetError());
         SDL_ClearError();
         return nullptr;
     }
 
-    const double l_aspectRatio = static_cast<double>(l_imgage->w) / l_imgage->h;
+    const double l_aspectRatio = static_cast<double>(l_image->w) / l_image->h;
     int l_targetWidth, l_targetHeight;
 
-    if (p_fitWidth * l_imgage->h <= p_fitHeight * l_imgage->w) 
+    if (p_fitWidth * l_image->h <= p_fitHeight * l_image->w) 
     {
-        l_targetWidth = std::min(l_imgage->w, p_fitWidth);
+        l_targetWidth = std::min(l_image->w, p_fitWidth);
         l_targetHeight = static_cast<int>(l_targetWidth / l_aspectRatio);
     } 
     else 
     {
-        l_targetHeight = std::min(l_imgage->h, p_fitHeight);
+        l_targetHeight = std::min(l_image->h, p_fitHeight);
         l_targetWidth = static_cast<int>(l_targetHeight * l_aspectRatio);
     }
 
     l_targetWidth = static_cast<int>(l_targetWidth * Globals::g_Screen.m_ppuX);
     l_targetHeight = static_cast<int>(l_targetHeight * Globals::g_Screen.m_ppuY);
 
-    SDL_Surface* l_image2 = zoomSurface(l_imgage, static_cast<double>(l_targetWidth) / l_imgage->w, static_cast<double>(l_targetHeight) / l_imgage->h, SMOOTHING_ON);
-    SDL_FreeSurface(l_imgage);
+    SDL_Surface* l_zoomedImage = zoomSurface(l_image, static_cast<double>(l_targetWidth) / l_image->w, static_cast<double>(l_targetHeight) / l_image->h, SMOOTHING_ON);
+    SDL_FreeSurface(l_image);
 
-    SDL_Surface* l_imgage3 = SDL_ConvertSurfaceFormat(l_image2, SDL_PIXELFORMAT_RGBA8888, 0); 
-    SDL_FreeSurface(l_image2);
-    return l_imgage3;
+    SDL_Surface* l_finalImage = SDL_ConvertSurfaceFormat(l_zoomedImage, SDL_PIXELFORMAT_RGBA8888, 0); 
+    SDL_FreeSurface(l_zoomedImage);
+    return l_finalImage;
 }
 
 void SDL_Utils::applySurface(const Sint16 p_x, const Sint16 p_y, SDL_Surface* p_source, SDL_Surface* p_destination, SDL_Rect *p_clip)
@@ -87,7 +95,7 @@ TTF_Font *SDL_Utils::loadFont(const std::string &p_font, const int p_size)
 	// 2. If the font file cannot be opened, log an error message.
 	// 3. Return the loaded font (a null pointer if the loading operation fails).
 
-    INHIBIT(SLD_Log("SDL_utils::loadFont(%s,%s)", p_font, p_size);)
+    INHIBIT(SDL_Log("SDL_utils::loadFont(%s,%d)", p_font.c_str(), p_size);)
 
     TTF_Font* l_font = TTF_OpenFont(p_font.c_str(), p_size);
     
@@ -131,10 +139,10 @@ void SDL_Utils::applyText(Sint16 p_x, Sint16 p_y, SDL_Surface* p_destination, TT
     switch (p_align)
     {
         case ETextAlign::LEFT:
-            applySurface(p_x - l_text->w, p_y, l_text, p_destination);
+            applySurface(p_x, p_y, l_text, p_destination);
             break;
         case ETextAlign::RIGHT:
-            applySurface(p_x, p_y, l_text, p_destination);
+            applySurface(p_x - l_text->w, p_y, l_text, p_destination);
             break;
         case ETextAlign::CENTER:
             applySurface(p_x - l_text->w / 2, p_y, l_text, p_destination);

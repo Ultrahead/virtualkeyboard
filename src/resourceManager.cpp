@@ -3,10 +3,10 @@
  * @brief Implementation file for the CResourceManager class.
  */
 
-#ifdef _WIN64
+#ifndef __MINGW32__
 #define zoomSurface GFX_zoomSurface
 #define shrinkSurface GFX_shrinkSurface
-#endif // _WIN64
+#endif // __MINGW32__
 
 #include <cstdint>
 #include <iostream>
@@ -69,14 +69,14 @@ const bool CResourceManager::init(const int argc, char** const argv)
     fs::path l_resPath;
 	uint8_t l_pathSourceId = 0;
 
-#ifdef _WIN64
+#ifndef __MINGW32__
     char* l_env = nullptr;
     size_t len = 0;
 
     if (_dupenv_s(&l_env, &len, "VK_RES_PATH") == 0 && l_env != nullptr)
 #else
     if (const char* l_env = getenv("VK_RES_PATH"))
-#endif // _WIN64
+#endif // __MINGW32__
     {
 		l_resPath = fs::path(l_env);      
 		l_pathSourceId = isPathValid(l_resPath) ? 1 : 0; // From the environment variable
